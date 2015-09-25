@@ -1,39 +1,39 @@
-
-from kivy.config import Config
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.graphics import *
+#------------------------------------ from kivy.graphics import Color, Rectangle
+from kivy.core.window import Window
+from kivy.uix.image import Image
 
-class MyWidget(Widget):
-    
+class Sprite(Image):
     def __init__(self, **kwargs):
-        super(MyWidget, self).__init__(**kwargs)
-        self.bind(pos=self.update_canvas)
-        self.bind(size=self.update_canvas)
-        self.update_canvas()
-        
-        return
-    
-    def update_canvas(self, *args):
-        self.canvas.clear()
-        self.ratio = self.size[0]/self.size[1]
-        self.default_size = [1280,720]
-        self.scale = self.size[0]/self.default_size[0]
-        with self.canvas:
-            Color(0, 0, 1, 1)
-            print(self.ratio)
-            Rectangle(pos=self.pos, size=[100*self.scale,100*self.scale])
-            Color(1, 0, 0, 0.5)
-            Rectangle(pos=[25,25], size=[100*self.scale,100*self.scale])
-        
-        return
+        super(Sprite, self).__init__(**kwargs)
+        self.size = self.texture_size
 
-class MyApp(App):
+class Game(Widget):
+    def __init__(self):
+        super(Game, self).__init__()
+        self.background = Sprite(source='images/a.png')
+        self.size = self.background.size
+        self.add_widget(self.background)
+        self.add_widget(Sprite(source='images/a1.png'))
+    #--------------------------------------------- def __init__(self, **kwargs):
+        #---------------------------------- super(Game, self).__init__(**kwargs)
+        #----------------------------------------------------- with self.canvas:
+            #------------------------------------------------ Color(.5, .5, 1.0)
+            #------------------------------ Rectangle(pos=(0,0), size=self.size)
+            #-------------------------------------------------------------- pass
+    #------------------------------------------------------- def __init__(self):
+        #------------------------------------------ super(Game, self).__init__()
+        #------------------------ self.add_widget(Sprite(source='images/a.png'))
+            
+class GameApp(App):
     def build(self):
-        return MyWidget()
-
-if __name__ == '__main__':
+        #----------------------------------------- return Game(size=Window.size)
+        #--------------------------------------------------------- return Game()
+        game = Game()
+        Window.size = game.size
+        return game
     
-    MyApp().run()
-    
-    pass
+if __name__ == "__main__":
+        
+        GameApp().run()

@@ -9,7 +9,6 @@ from kivy.logger import Logger
 from kivy.metrics import Metrics
 from kivy.graphics import Color, Rectangle
 from kivy.config import Config
-
 import math
 
 Config.set ( 'input', 'mouse', 'mouse,disable_multitouch' )

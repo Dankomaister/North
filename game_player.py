@@ -9,8 +9,9 @@ from math import copysign, sqrt
 
 class Player(Sprite):
     
-    def __init__(self, position):
+    def __init__(self, id, position):
         super(Player, self).__init__(source='graphics/player.png', pos=position)
+        self.id = id
         
         self.velocity = [0, 0]
         self.touch_position = position
@@ -21,9 +22,9 @@ class Player(Sprite):
     
     def update(self):
         
+#         print(self.children)
+        
         self.map_offset = self.parent.offset
-        self.map_position[0] += self.velocity[0]
-        self.map_position[1] += self.velocity[1]
         
         if copysign(1, self.velocity[0]) * (self.touch_position[0] - self.map_position[0]) < 0:
             self.velocity[0] = 0
@@ -36,8 +37,22 @@ class Player(Sprite):
             self.map_position[1] -= self.velocity[1]
             self.velocity = [0,0]
         
+        for child in self.parent.children:
+            if child.id == self.id or child.id == 'sprite':
+                continue
+            if self.collide_widget(child):
+                self.map_position[0] -= self.velocity[0]
+                self.map_position[1] -= self.velocity[1]
+                self.velocity = [0,0]
+            print(self.id,child.id,self.collide_widget(child))
+        
+        self.map_position[0] += self.velocity[0]
+        self.map_position[1] += self.velocity[1]
         self.x = self.map_position[0] + self.map_offset[0]
         self.y = self.map_position[1] + self.map_offset[1]
+        
+#         print(self.parent.children[0].map_position)
+#         print(self.collide_widget(self.parent.children[0]))
         
         return
     

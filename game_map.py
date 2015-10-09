@@ -16,9 +16,9 @@ class World(Widget):
         self.size = self.sprite.size
         self.offset = [0,0]
         
-        self.add_widget(self.sprite)
+        self.id = 'test'
         
-        print(self.children)
+        self.add_widget(self.sprite)
         
         return
     
@@ -27,7 +27,10 @@ class World(Widget):
         self.sprite.x = self.offset[0]
         self.sprite.y = self.offset[1]
         
-        return
+        for child in self.children:
+            if child.id == 'sprite':
+                continue
+            child.update()
     
     def on_touch_move(self, touch):
         

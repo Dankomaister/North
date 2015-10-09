@@ -10,36 +10,39 @@ from random import random
 
 class Enemy1(Sprite):
     
-    def __init__(self, position):
+    def __init__(self, id, position):
         super(Enemy1, self).__init__(source='graphics/enemy1.png', pos=position)
+        self.id = id
         
         self.velocity = [0, 0]
-        self.touch_position = position
         self.map_position = position
         self.map_offset = [0, 0]
                 
         return
     
-    def update(self,map):
+    def update(self):
         
         self.velocity[0] += 2*(0.5-random())
         self.velocity[1] += 2*(0.5-random())
         
-        self.map_offset = map.offset
-        self.map_position[0] += self.velocity[0]
-        self.map_position[1] += self.velocity[1]
+        self.map_offset = self.parent.offset
         
-        if copysign(1, self.velocity[0]) * (self.touch_position[0] - self.map_position[0]) < 0:
-            self.velocity[0] = 0
-        
-        if copysign(1, self.velocity[1]) * (self.touch_position[1] - self.map_position[1]) < 0:
-            self.velocity[1] = 0
-        
-        if not map.collide_point(self.map_position[0],self.map_position[1]):
+        if not self.parent.collide_point(self.map_position[0],self.map_position[1]):
             self.map_position[0] -= self.velocity[0]
             self.map_position[1] -= self.velocity[1]
             self.velocity = [0,0]
         
+        for child in self.parent.children:
+            if child.id == self.id or child.id == 'sprite':
+                continue
+            if self.collide_widget(child):
+                self.map_position[0] -= self.velocity[0]
+                self.map_position[1] -= self.velocity[1]
+                self.velocity = [0,0]
+            print(self.id,child.id,self.collide_widget(child))
+        
+        self.map_position[0] += self.velocity[0]
+        self.map_position[1] += self.velocity[1]
         self.x = self.map_position[0] + self.map_offset[0]
         self.y = self.map_position[1] + self.map_offset[1]
         

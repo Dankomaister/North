@@ -12,6 +12,7 @@ class Sprite(Image):
         
         super(Sprite,self).__init__(**kwargs)
         self.size = self.texture_size
+        self.id = 'sprite'
         
         return
     

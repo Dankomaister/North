@@ -17,12 +17,14 @@ class Player(Sprite):
         self.touch_position = position
         self.map_position = position
         self.map_offset = [0, 0]
-                
+        
+        print(self.children)
+        
         return
     
     def update(self):
         
-#         print(self.children)
+        print(self.children)
         
         self.map_offset = self.parent.offset
         

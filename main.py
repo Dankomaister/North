@@ -19,16 +19,20 @@ class Game(Widget):
         
         self.gameworld = GameWorld()
         self.map = Map(map_file='graphics/map.png')
+        self.player = Player(id='player1',position=(100,100))
         
         self.add_widget(self.gameworld)
         self.gameworld.add_widget(self.map)
+        self.gameworld.add_widget(self.player)
+        
+        
         
         Clock.schedule_interval(self.update, 1.0 / 60.0)
         
         return
     
     def update(self, dt):
-#         self.map.update()
+        self.gameworld.update()
         
         return
 

@@ -1,77 +1,60 @@
 '''
-Created on 2 okt. 2015
+Created on 23 okt. 2015
 
 @author: danhe
 '''
 
-from game_sprite import Sprite
+from game_tools import Sprite, world_to_graph, graph_to_world
 from math import copysign, sqrt
 
 class Player(Sprite):
-    
+
     def __init__(self, id, position):
-        super(Player, self).__init__(source='graphics/player.png', pos=position)
+        super(Player, self).__init__(source='graphics/player.png')
+        
         self.id = id
         
-        self.velocity = [0, 0]
-        self.touch_position = position
-        self.map_position = position
-        self.map_offset = [0, 0]
+        self.size = (32, 32)
         
-        print(self.children)
-        
-        return
-    
-    def update(self):
-        
-        print(self.children)
-        
-        self.map_offset = self.parent.offset
-        
-        if copysign(1, self.velocity[0]) * (self.touch_position[0] - self.map_position[0]) < 0:
-            self.velocity[0] = 0
-        
-        if copysign(1, self.velocity[1]) * (self.touch_position[1] - self.map_position[1]) < 0:
-            self.velocity[1] = 0
-        
-        if not self.parent.collide_point(self.map_position[0],self.map_position[1]):
-            self.map_position[0] -= self.velocity[0]
-            self.map_position[1] -= self.velocity[1]
-            self.velocity = [0,0]
-        
-        for child in self.parent.children:
-            if child.id == self.id or child.id == 'sprite':
-                continue
-            if self.collide_widget(child):
-                self.map_position[0] -= self.velocity[0]
-                self.map_position[1] -= self.velocity[1]
-                self.velocity = [0,0]
-            print(self.id,child.id,self.collide_widget(child))
-        
-        self.map_position[0] += self.velocity[0]
-        self.map_position[1] += self.velocity[1]
-        self.x = self.map_position[0] + self.map_offset[0]
-        self.y = self.map_position[1] + self.map_offset[1]
-        
-#         print(self.parent.children[0].map_position)
-#         print(self.collide_widget(self.parent.children[0]))
+        self.position = position
+        self.goal = self.position
+        self.path = []
+        self.pos = graph_to_world(self.position)
+        self.new_pos = self.pos
+        self.vel = (0, 0)
         
         return
     
     def on_touch_down(self, touch):
         
         if touch.button == 'left':
-            self.touch_position = list(touch.pos)
-            self.touch_position[0] -= self.map_offset[0]
-            self.touch_position[1] -= self.map_offset[1]
+            self.goal = world_to_graph(touch.pos)
             
-            dx = self.map_position[0] - self.touch_position[0]
-            dy = self.map_position[1] - self.touch_position[1]
+            self.path = self.parent.pathfinding(self.position, self.goal)
             
-            N = sqrt(dx ** 2 + dy ** 2)
+        return
+    
+    def update(self):
+        
+        if self.path and self.vel == (0, 0):
             
-            self.velocity[0] = -5 * dx / N
-            self.velocity[1] = -5 * dy / N
+            node = self.path[0]
+            del self.path[0]
+            
+            self.new_pos = graph_to_world(node)
+            
+            dx = node[0] - self.position[0]
+            dy = node[1] - self.position[1]
+            
+            self.vel = (dx*4, dy*4)
+        
+        if copysign(1, self.vel[0])*(self.new_pos[0]-self.pos[0]) <= 0 and copysign(1, self.vel[1])*(self.new_pos[1]-self.pos[1]) <= 0:
+            
+            self.vel = (0, 0)
+        
+        self.pos[0] = round(self.pos[0] + self.vel[0])
+        self.pos[1] = round(self.pos[1] + self.vel[1])
+        self.position = world_to_graph(self.pos)
         
         return
     

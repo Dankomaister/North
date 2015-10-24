@@ -4,7 +4,7 @@ Created on 23 okt. 2015
 @author: danhe
 '''
 
-from game_sprite import Sprite
+from game_tools import Sprite
 
 class Map(Sprite):
 
@@ -12,6 +12,10 @@ class Map(Sprite):
         super(Map,self).__init__(source=map_file)
         
         self.id = 'map'
+        
+        return
+    
+    def update(self):
         
         return
     

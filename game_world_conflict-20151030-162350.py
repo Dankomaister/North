@@ -112,7 +112,7 @@ class GameWorld(Widget):
                 if node not in cost_so_far or new_cost < cost_so_far[node]:
                     cost_so_far[node] = new_cost
                     priority = new_cost + heuristic(goal, node)
-                    frontier.put(node, 0)
+                    frontier.put(node, priority)
                     came_from[node] = current
         print(came_from)
         current = goal
